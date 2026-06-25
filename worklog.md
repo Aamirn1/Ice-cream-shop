@@ -43,3 +43,29 @@ Stage Summary:
 - Dev server runs clean on port 3000 with 200 status
 - Lint passes with no errors
 - Hydration warnings from cart localStorage are expected and non-breaking
+
+---
+Task ID: 2
+Agent: main
+Task: Add favicon, og-image, neon logo, and push to GitHub
+
+Work Log:
+- Copied user's uploaded photo to public/og-image.png (1536x1024) for social media link previews
+- Created new neon ice cream cone favicon.svg (pink scoop + blue waffle cone with neon glow on dark bg)
+- Updated layout.tsx metadata: og:image, twitter:image, apple-touch-icon, openGraph images array, twitter images array
+- Updated siteUrl to auto-resolve from VERCEL_URL env var for Vercel deployment
+- Updated site.webmanifest with Ice Cream Shop branding and neon theme colors
+- Added neon logo CSS to globals.css: .neon-logo with .neon-script (pink glow) + .neon-bold (blue glow) + flicker animations
+- Updated Navbar.tsx: desktop + mobile drawer logo now use neon "Ice cream Shop" text
+- Updated Footer.tsx: footer logo now uses neon style
+- Verified neon logo renders: script color rgb(255,110,199), bold color rgb(34,211,238)
+- Updated .gitignore to exclude /upload/, /worklog.md, /tool-results/, /examples/, db files
+- Committed all changes and pushed to https://github.com/Aamirn1/Ice-cream-shop (branch: main)
+- Removed token from remote URL after push for security
+
+Stage Summary:
+- Favicon: neon ice cream cone SVG (pink/blue glow on dark circle)
+- og-image: user's uploaded photo, referenced in openGraph + twitter metadata for WhatsApp/Facebook/Instagram sharing
+- Logo: neon style matching reference - "Ice cream" cursive neon pink + "Shop" bold neon blue, with flicker animation
+- GitHub: code pushed to https://github.com/Aamirn1/Ice-cream-shop successfully
+- Ready for Vercel deployment (siteUrl auto-resolves from VERCEL_URL)
