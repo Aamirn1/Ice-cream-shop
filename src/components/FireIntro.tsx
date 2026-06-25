@@ -85,7 +85,6 @@ export default function FireIntro({ onComplete }: FireIntroProps) {
     })),
   [])
 
-  const icecreamLetters = 'ICE CREAM'.split('')
   const shopLetters = 'SHOP'.split('')
 
   const showShop = phase === 'shop' || phase === 'fadeout'
@@ -163,26 +162,51 @@ export default function FireIntro({ onComplete }: FireIntroProps) {
           )}
 
           {/* Text */}
-          <div className="relative z-10 flex flex-col items-center gap-1 mt-8">
-            {/* ICE CREAM */}
-            <div className="flex flex-wrap justify-center max-w-[90vw]">
-              {icecreamLetters.map((letter, i) => (
-                <motion.span
-                  key={`icecream-${i}`}
-                  className="text-5xl sm:text-7xl md:text-8xl font-serif font-black"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(335 80% 70%), hsl(280 75% 68%), hsl(195 85% 62%))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
-                  initial={{ opacity: 0, y: 60, scale: 0.3, rotateX: -90 }}
-                  animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
-                  transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {letter === ' ' ? '\u00A0' : letter}
-                </motion.span>
-              ))}
+          <div className="relative z-10 flex flex-col items-center justify-center gap-2 sm:gap-3 mt-8 px-4 w-full">
+            {/* ICE CREAM - grouped into words to prevent bad wrapping */}
+            <div className="flex flex-col items-center justify-center w-full">
+              <div className="flex items-center justify-center flex-wrap gap-x-3 sm:gap-x-5 max-w-[95vw]">
+                {/* ICE word group */}
+                <span className="flex whitespace-nowrap">
+                  {'ICE'.split('').map((letter, i) => (
+                    <motion.span
+                      key={`ice-${i}`}
+                      className="text-5xl sm:text-7xl md:text-8xl font-serif font-black"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(335 80% 70%), hsl(280 75% 68%), hsl(195 85% 62%))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                      initial={{ opacity: 0, y: 60, scale: 0.3, rotateX: -90 }}
+                      animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+                      transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      {letter}
+                    </motion.span>
+                  ))}
+                </span>
+                {/* CREAM word group */}
+                <span className="flex whitespace-nowrap">
+                  {'CREAM'.split('').map((letter, i) => (
+                    <motion.span
+                      key={`cream-${i}`}
+                      className="text-5xl sm:text-7xl md:text-8xl font-serif font-black"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(335 80% 70%), hsl(280 75% 68%), hsl(195 85% 62%))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                      initial={{ opacity: 0, y: 60, scale: 0.3, rotateX: -90 }}
+                      animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+                      transition={{ duration: 0.6, delay: (i + 3) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      {letter}
+                    </motion.span>
+                  ))}
+                </span>
+              </div>
             </div>
 
             {/* Glow behind text */}
@@ -198,11 +222,11 @@ export default function FireIntro({ onComplete }: FireIntroProps) {
             />
 
             {/* SHOP */}
-            <div className="flex">
+            <div className="flex whitespace-nowrap">
               {shopLetters.map((letter, i) => (
                 <motion.span
                   key={`shop-${i}`}
-                  className="text-7xl sm:text-8xl md:text-9xl font-serif font-black"
+                  className="text-6xl sm:text-8xl md:text-9xl font-serif font-black"
                   style={{
                     background: 'linear-gradient(135deg, hsl(335 80% 70%), hsl(280 75% 68%), hsl(195 85% 62%))',
                     WebkitBackgroundClip: 'text',

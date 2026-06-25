@@ -267,11 +267,9 @@ html {
   font-weight: 700;
   color: #FF6EC7;
   text-shadow:
-    0 0 4px #FF6EC7,
-    0 0 8px #FF6EC7,
-    0 0 16px rgba(255, 110, 199, 0.8),
-    0 0 24px rgba(255, 110, 199, 0.5),
-    0 0 36px rgba(192, 38, 211, 0.4);
+    0 0 2px #FF6EC7,
+    0 0 5px rgba(255, 110, 199, 0.6),
+    0 0 10px rgba(255, 110, 199, 0.4);
   animation: neon-flicker-pink 4s ease-in-out infinite;
 }
 
@@ -279,11 +277,9 @@ html {
   font-weight: 900;
   color: #22D3EE;
   text-shadow:
-    0 0 4px #22D3EE,
-    0 0 8px #22D3EE,
-    0 0 16px rgba(34, 211, 238, 0.8),
-    0 0 24px rgba(59, 130, 246, 0.5),
-    0 0 36px rgba(59, 130, 246, 0.4);
+    0 0 2px #22D3EE,
+    0 0 5px rgba(34, 211, 238, 0.6),
+    0 0 10px rgba(34, 211, 238, 0.4);
   animation: neon-flicker-blue 4s ease-in-out infinite;
   animation-delay: 0.5s;
 }
@@ -302,113 +298,93 @@ html {
   font-weight: 700;
   color: #FF6EC7;
   text-shadow:
-    0 0 3px #FF6EC7,
-    0 0 6px #FF6EC7,
-    0 0 12px rgba(255, 110, 199, 0.7),
-    0 0 20px rgba(192, 38, 211, 0.4);
+    0 0 2px #FF6EC7,
+    0 0 4px rgba(255, 110, 199, 0.5);
 }
 
 .neon-logo-sm .neon-bold {
   font-weight: 900;
   color: #22D3EE;
   text-shadow:
-    0 0 3px #22D3EE,
-    0 0 6px #22D3EE,
-    0 0 12px rgba(34, 211, 238, 0.7),
-    0 0 20px rgba(59, 130, 246, 0.4);
+    0 0 2px #22D3EE,
+    0 0 4px rgba(34, 211, 238, 0.5);
 }
 
-/* Neon flicker animations */
+/* Neon flicker animations - reduced glow */
 @keyframes neon-flicker-pink {
   0%, 100% {
     text-shadow:
-      0 0 4px #FF6EC7,
-      0 0 8px #FF6EC7,
-      0 0 16px rgba(255, 110, 199, 0.8),
-      0 0 24px rgba(255, 110, 199, 0.5),
-      0 0 36px rgba(192, 38, 211, 0.4);
+      0 0 2px #FF6EC7,
+      0 0 5px rgba(255, 110, 199, 0.6),
+      0 0 10px rgba(255, 110, 199, 0.4);
   }
   92% {
     text-shadow:
-      0 0 4px #FF6EC7,
-      0 0 8px #FF6EC7,
-      0 0 16px rgba(255, 110, 199, 0.8),
-      0 0 24px rgba(255, 110, 199, 0.5),
-      0 0 36px rgba(192, 38, 211, 0.4);
+      0 0 2px #FF6EC7,
+      0 0 5px rgba(255, 110, 199, 0.6),
+      0 0 10px rgba(255, 110, 199, 0.4);
   }
   93% {
-    text-shadow: 0 0 2px #FF6EC7, 0 0 4px rgba(255, 110, 199, 0.5);
+    text-shadow: 0 0 1px #FF6EC7;
   }
   94% {
     text-shadow:
-      0 0 4px #FF6EC7,
-      0 0 8px #FF6EC7,
-      0 0 16px rgba(255, 110, 199, 0.8),
-      0 0 24px rgba(255, 110, 199, 0.5),
-      0 0 36px rgba(192, 38, 211, 0.4);
+      0 0 2px #FF6EC7,
+      0 0 5px rgba(255, 110, 199, 0.6),
+      0 0 10px rgba(255, 110, 199, 0.4);
   }
   96% {
-    text-shadow: 0 0 2px #FF6EC7;
+    text-shadow: 0 0 1px #FF6EC7;
   }
   97% {
     text-shadow:
-      0 0 4px #FF6EC7,
-      0 0 8px #FF6EC7,
-      0 0 16px rgba(255, 110, 199, 0.8),
-      0 0 24px rgba(255, 110, 199, 0.5),
-      0 0 36px rgba(192, 38, 211, 0.4);
+      0 0 2px #FF6EC7,
+      0 0 5px rgba(255, 110, 199, 0.6),
+      0 0 10px rgba(255, 110, 199, 0.4);
   }
 }
 
 @keyframes neon-flicker-blue {
   0%, 100% {
     text-shadow:
-      0 0 4px #22D3EE,
-      0 0 8px #22D3EE,
-      0 0 16px rgba(34, 211, 238, 0.8),
-      0 0 24px rgba(59, 130, 246, 0.5),
-      0 0 36px rgba(59, 130, 246, 0.4);
+      0 0 2px #22D3EE,
+      0 0 5px rgba(34, 211, 238, 0.6),
+      0 0 10px rgba(34, 211, 238, 0.4);
   }
   90% {
     text-shadow:
-      0 0 4px #22D3EE,
-      0 0 8px #22D3EE,
-      0 0 16px rgba(34, 211, 238, 0.8),
-      0 0 24px rgba(59, 130, 246, 0.5),
-      0 0 36px rgba(59, 130, 246, 0.4);
+      0 0 2px #22D3EE,
+      0 0 5px rgba(34, 211, 238, 0.6),
+      0 0 10px rgba(34, 211, 238, 0.4);
   }
   91% {
-    text-shadow: 0 0 2px #22D3EE, 0 0 4px rgba(34, 211, 238, 0.5);
+    text-shadow: 0 0 1px #22D3EE;
   }
   92% {
     text-shadow:
-      0 0 4px #22D3EE,
-      0 0 8px #22D3EE,
-      0 0 16px rgba(34, 211, 238, 0.8),
-      0 0 24px rgba(59, 130, 246, 0.5),
-      0 0 36px rgba(59, 130, 246, 0.4);
+      0 0 2px #22D3EE,
+      0 0 5px rgba(34, 211, 238, 0.6),
+      0 0 10px rgba(34, 211, 238, 0.4);
   }
   94% {
-    text-shadow: 0 0 2px #22D3EE;
+    text-shadow: 0 0 1px #22D3EE;
   }
   95% {
     text-shadow:
-      0 0 4px #22D3EE,
-      0 0 8px #22D3EE,
-      0 0 16px rgba(34, 211, 238, 0.8),
-      0 0 24px rgba(59, 130, 246, 0.5),
-      0 0 36px rgba(59, 130, 246, 0.4);
+      0 0 2px #22D3EE,
+      0 0 5px rgba(34, 211, 238, 0.6),
+      0 0 10px rgba(34, 211, 238, 0.4);
   }
 }
 
-/* Neon icon glow for the ice cream cone icon next to logo */
+/* Neon icon glow for the ice cream cone icon next to logo - reduced */
 .neon-icon-pink {
   color: #FF6EC7;
-  filter: drop-shadow(0 0 4px #FF6EC7) drop-shadow(0 0 8px rgba(255, 110, 199, 0.6));
+  filter: drop-shadow(0 0 2px #FF6EC7) drop-shadow(0 0 4px rgba(255, 110, 199, 0.4));
 }
 
 .neon-icon-blue {
   color: #22D3EE;
-  filter: drop-shadow(0 0 4px #22D3EE) drop-shadow(0 0 8px rgba(34, 211, 238, 0.6));
+  filter: drop-shadow(0 0 2px #22D3EE) drop-shadow(0 0 4px rgba(34, 211, 238, 0.4));
 }
 
