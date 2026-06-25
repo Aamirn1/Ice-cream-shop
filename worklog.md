@@ -69,3 +69,26 @@ Stage Summary:
 - Logo: neon style matching reference - "Ice cream" cursive neon pink + "Shop" bold neon blue, with flicker animation
 - GitHub: code pushed to https://github.com/Aamirn1/Ice-cream-shop successfully
 - Ready for Vercel deployment (siteUrl auto-resolves from VERCEL_URL)
+
+---
+Task ID: 3
+Agent: main
+Task: Fix hero image, intro text centering, and reduce logo glow
+
+Work Log:
+- Analyzed user screenshots with VLM: confirmed hero was still burger image, intro text centering issue, logo glow too bright
+- Regenerated hero-banner.png (1344x768) with ice cream image - verified via VLM it's now ice cream not burger
+- Fixed FireIntro.tsx text centering: restructured "ICE CREAM" from individual letter flex items (which caused bad wrapping on mobile) to grouped word spans (ICE, CREAM) with whitespace-nowrap, ensuring proper centering
+- Added px-4 w-full and justify-center to text container for proper mobile centering
+- Reduced neon logo glow in globals.css: text-shadow blur radii reduced from 4-36px to 2-10px, opacity from 0.8 to 0.6
+- Reduced neon-logo-sm glow similarly
+- Reduced neon-flicker keyframe values to match
+- Reduced neon-icon drop-shadow glow
+- Verified all 3 fixes via VLM on live site: hero=ice cream, glow=subtle, text=centered
+- Committed and pushed to GitHub (commit d8b500b)
+
+Stage Summary:
+- Hero image: now ice cream (was burger from Food Express)
+- Intro text: properly centered on mobile (word grouping prevents flex-wrap issues)
+- Logo glow: reduced to subtle levels (2-10px blur vs previous 4-36px)
+- All changes pushed to https://github.com/Aamirn1/Ice-cream-shop
