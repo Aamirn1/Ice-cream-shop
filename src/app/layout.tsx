@@ -15,7 +15,11 @@ const playfair = Playfair_Display({
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://icecreamshop.example.com");
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "https://icecreamshop.example.com");
 
 export const metadata: Metadata = {
   title: {
@@ -75,11 +79,11 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/og-image.png",
-        width: 1536,
-        height: 1024,
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
         alt: "Ice Cream Shop - Neon-lit premium ice cream parlor. Where every scoop tells a story. Artisan scoops, sundaes, cones and shakes.",
-        type: "image/png",
+        type: "image/jpeg",
       },
     ],
   },
@@ -90,7 +94,9 @@ export const metadata: Metadata = {
       "Experience the creamiest, dreamiest ice cream in town. Classic scoops, indulgent sundaes — every bite is pure bliss.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
         alt: "Ice Cream Shop - Premium Ice Cream Parlor",
       },
     ],
