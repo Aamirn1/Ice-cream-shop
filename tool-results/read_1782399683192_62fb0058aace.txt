@@ -1,0 +1,947 @@
+     1→     1→'use client'
+     2→     2→
+     3→     3→import { useState, useCallback } from 'react'
+     4→     4→import { motion, AnimatePresence } from 'framer-motion'
+     5→     5→import {
+     6→     6→  ShoppingCart,
+     7→     7→  Truck,
+     8→     8→  CreditCard,
+     9→     9→  ClipboardCheck,
+    10→    10→  Minus,
+    11→    11→  Plus,
+    12→    12→  Trash2,
+    13→    13→  Check,
+    14→    14→  Flame,
+    15→    15→  Banknote,
+    16→    16→  Wifi,
+    17→    17→  ShieldCheck,
+    18→    18→  Clock,
+    19→    19→  MapPin,
+    20→    20→  Phone,
+    21→    21→  Mail,
+    22→    22→  User,
+    23→    23→  FileText,
+    24→    24→  ArrowRight,
+    25→    25→  ArrowLeft,
+    26→    26→  Copy,
+    27→    27→  CheckCheck,
+    28→    28→  ChefHat,
+    29→    29→} from 'lucide-react'
+    30→    30→import { Button } from '@/components/ui/button'
+    31→    31→import { Input } from '@/components/ui/input'
+    32→    32→import { useRouter } from 'next/navigation'
+    33→    33→import { useCart } from '@/hooks/use-cart'
+    34→    34→import { useToast } from '@/hooks/use-toast'
+    35→    35→import ChefTransition from '@/components/ChefTransition'
+    36→    36→
+    37→    37→interface CheckoutPageProps {
+    38→    38→  onNavigate?: (page: string, param?: string) => void
+    39→    39→}
+    40→    40→
+    41→    41→const steps = [
+    42→    42→  { label: 'Cart', icon: ShoppingCart, desc: 'Review items' },
+    43→    43→  { label: 'Delivery', icon: Truck, desc: 'Where to deliver' },
+    44→    44→  { label: 'Payment', icon: CreditCard, desc: 'How to pay' },
+    45→    45→  { label: 'Confirm', icon: ClipboardCheck, desc: 'Review & place' },
+    46→    46→]
+    47→    47→
+    48→    48→export default function CheckoutPage({ onNavigate }: CheckoutPageProps) {
+    49→    49→  const { items, subtotal, totalItems, updateQuantity, removeItem, clearCart } = useCart()
+    50→    50→  const router = useRouter()
+    51→    51→  const { toast } = useToast()
+    52→    52→  const [currentStep, setCurrentStep] = useState(0)
+    53→    53→  const [isPlacing, setIsPlacing] = useState(false)
+    54→    54→  const [orderPlaced, setOrderPlaced] = useState(false)
+    55→    55→  const [showChef, setShowChef] = useState(false)
+    56→    56→  const [transactionId, setTransactionId] = useState('')
+    57→    57→  const [copiedOrderId, setCopiedOrderId] = useState(false)
+    58→    58→  const [orderData, setOrderData] = useState({
+    59→    59→    orderId: '',
+    60→    60→    estimatedTime: '',
+    61→    61→  })
+    62→    62→
+    63→    63→  const [formData, setFormData] = useState({
+    64→    64→    name: '',
+    65→    65→    phone: '',
+    66→    66→    email: '',
+    67→    67→    address: '',
+    68→    68→    city: '',
+    69→    69→    notes: '',
+    70→    70→  })
+    71→    71→
+    72→    72→  const [paymentMethod, setPaymentMethod] = useState('cash')
+    73→    73→
+    74→    74→  const deliveryFee = subtotal >= 2500 ? 0 : 150
+    75→    75→  const total = subtotal + deliveryFee
+    76→    76→
+    77→    77→  const formatPrice = (price: number) => `Rs. ${price.toLocaleString()}`
+    78→    78→
+    79→    79→  const updateField = (field: string, value: string) => {
+    80→    80→    setFormData((prev) => ({ ...prev, [field]: value }))
+    81→    81→  }
+    82→    82→
+    83→    83→  const canProceed = () => {
+    84→    84→    if (currentStep === 0) return items.length > 0
+    85→    85→    if (currentStep === 1)
+    86→    86→      return formData.name && formData.phone && formData.address && formData.city
+    87→    87→    if (currentStep === 2) {
+    88→    88→      if (paymentMethod !== 'cash') return transactionId.trim().length > 0
+    89→    89→      return true
+    90→    90→    }
+    91→    91→    return true
+    92→    92→  }
+    93→    93→
+    94→    94→  const handleNext = () => {
+    95→    95→    if (canProceed() && currentStep < 3) {
+    96→    96→      setCurrentStep(currentStep + 1)
+    97→    97→      window.scrollTo({ top: 0, behavior: 'smooth' })
+    98→    98→    }
+    99→    99→  }
+   100→   100→
+   101→   101→  const handleBack = () => {
+   102→   102→    if (currentStep > 0) {
+   103→   103→      setCurrentStep(currentStep - 1)
+   104→   104→      window.scrollTo({ top: 0, behavior: 'smooth' })
+   105→   105→    }
+   106→   106→  }
+   107→   107→
+   108→   108→  const handlePlaceOrder = async () => {
+   109→   109→    setIsPlacing(true)
+   110→   110→    // Simulate order placement
+   111→   111→    await new Promise((resolve) => setTimeout(resolve, 1500))
+   112→   112→    const orderId = `FE-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
+   113→   113→    setOrderData({
+   114→   114→      orderId,
+   115→   115→      estimatedTime: '30-45',
+   116→   116→    })
+   117→   117→    setIsPlacing(false)
+   118→   118→    // Trigger chef animation
+   119→   119→    setShowChef(true)
+   120→   120→  }
+   121→   121→
+   122→   122→  const onChefComplete = useCallback(() => {
+   123→   123→    setOrderPlaced(true)
+   124→   124→    clearCart()
+   125→   125→  }, [clearCart])
+   126→   126→
+   127→   127→  const copyOrderId = () => {
+   128→   128→    navigator.clipboard.writeText(orderData.orderId)
+   129→   129→    setCopiedOrderId(true)
+   130→   130→    toast({
+   131→   131→      title: 'Copied!',
+   132→   132→      description: 'Order ID copied to clipboard',
+   133→   133→    })
+   134→   134→    setTimeout(() => setCopiedOrderId(false), 2000)
+   135→   135→  }
+   136→   136→
+   137→   137→  if (items.length === 0 && !orderPlaced) {
+   138→   138→    return (
+   139→   139→      <div className="min-h-screen bg-background flex items-center justify-center">
+   140→   140→        <motion.div
+   141→   141→          className="text-center"
+   142→   142→          initial={{ opacity: 0, y: 20 }}
+   143→   143→          animate={{ opacity: 1, y: 0 }}
+   144→   144→        >
+   145→   145→          <ShoppingCart className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+   146→   146→          <h2 className="text-2xl font-serif font-bold text-foreground mb-2">
+   147→   147→            Your cart is empty
+   148→   148→          </h2>
+   149→   149→          <p className="text-muted-foreground mb-6">
+   150→   150→            Add some delicious items to get started
+   151→   151→          </p>
+   152→   152→          <Button
+   153→   153→            className="bg-fire-gradient text-primary-foreground btn-fire-glow"
+   154→   154→            onClick={() => router.push('/menu')}
+   155→   155→          >
+   156→   156→            Browse Menu
+   157→   157→          </Button>
+   158→   158→        </motion.div>
+   159→   159→      </div>
+   160→   160→    )
+   161→   161→  }
+   162→   162→
+   163→   163→  // Order confirmed page
+   164→   164→  if (orderPlaced) {
+   165→   165→    return (
+   166→   166→      <div className="min-h-screen bg-background flex items-center justify-center px-4 pt-24 pb-10 overflow-x-hidden">
+   167→   167→        <motion.div
+   168→   168→          className="text-center max-w-md w-full"
+   169→   169→          initial={{ opacity: 0, scale: 0.9 }}
+   170→   170→          animate={{ opacity: 1, scale: 1 }}
+   171→   171→          transition={{ duration: 0.5 }}
+   172→   172→        >
+   173→   173→          {/* Success Icon */}
+   174→   174→          <motion.div
+   175→   175→            className="relative mx-auto mb-6"
+   176→   176→            initial={{ scale: 0 }}
+   177→   177→            animate={{ scale: 1 }}
+   178→   178→            transition={{ type: 'spring', damping: 15, stiffness: 200, delay: 0.2 }}
+   179→   179→          >
+   180→   180→            <div className="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
+   181→   181→              <Check className="w-12 h-12 text-green-400" />
+   182→   182→            </div>
+   183→   183→            {/* Pulse ring */}
+   184→   184→            <motion.div
+   185→   185→              className="absolute inset-0 rounded-full border-2 border-green-400/40"
+   186→   186→              animate={{ scale: [1, 1.5], opacity: [1, 0] }}
+   187→   187→              transition={{ duration: 1.5, repeat: Infinity }}
+   188→   188→            />
+   189→   189→          </motion.div>
+   190→   190→
+   191→   191→          <motion.h2
+   192→   192→            className="text-3xl sm:text-4xl font-serif font-black text-foreground mb-2"
+   193→   193→            initial={{ opacity: 0, y: 10 }}
+   194→   194→            animate={{ opacity: 1, y: 0 }}
+   195→   195→            transition={{ delay: 0.4 }}
+   196→   196→          >
+   197→   197→            🔥 Order Confirmed!
+   198→   198→          </motion.h2>
+   199→   199→
+   200→   200→          <motion.p
+   201→   201→            className="text-muted-foreground mb-6"
+   202→   202→            initial={{ opacity: 0 }}
+   203→   203→            animate={{ opacity: 1 }}
+   204→   204→            transition={{ delay: 0.5 }}
+   205→   205→          >
+   206→   206→            Your order has been received and is being prepared.
+   207→   207→          </motion.p>
+   208→   208→
+   209→   209→          {/* Order ID Card */}
+   210→   210→          <motion.div
+   211→   211→            className="bg-card rounded-2xl border border-border p-5 mb-6 text-left"
+   212→   212→            initial={{ opacity: 0, y: 20 }}
+   213→   213→            animate={{ opacity: 1, y: 0 }}
+   214→   214→            transition={{ delay: 0.6 }}
+   215→   215→          >
+   216→   216→            <div className="flex items-center justify-between mb-4">
+   217→   217→              <h3 className="font-semibold text-foreground text-sm">Order Details</h3>
+   218→   218→              <span className="text-xs text-muted-foreground">
+   219→   219→                {new Date().toLocaleDateString('en-PK', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+   220→   220→              </span>
+   221→   221→            </div>
+   222→   222→
+   223→   223→            <div className="space-y-3">
+   224→   224→              <div className="flex items-center justify-between bg-secondary/50 rounded-lg p-3">
+   225→   225→                <div>
+   226→   226→                  <span className="text-xs text-muted-foreground block">Order ID</span>
+   227→   227→                  <span className="text-foreground font-mono font-bold text-sm">{orderData.orderId}</span>
+   228→   228→                </div>
+   229→   229→                <button
+   230→   230→                  onClick={copyOrderId}
+   231→   231→                  className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors px-2 py-1 rounded bg-primary/10"
+   232→   232→                >
+   233→   233→                  {copiedOrderId ? (
+   234→   234→                    <>
+   235→   235→                      <CheckCheck className="w-3 h-3" />
+   236→   236→                      Copied
+   237→   237→                    </>
+   238→   238→                  ) : (
+   239→   239→                    <>
+   240→   240→                      <Copy className="w-3 h-3" />
+   241→   241→                      Copy
+   242→   242→                    </>
+   243→   243→                  )}
+   244→   244→                </button>
+   245→   245→              </div>
+   246→   246→
+   247→   247→              <div className="flex items-center gap-3">
+   248→   248→                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+   249→   249→                  <Clock className="w-4 h-4 text-primary" />
+   250→   250→                </div>
+   251→   251→                <div>
+   252→   252→                  <span className="text-xs text-muted-foreground block">Estimated Delivery</span>
+   253→   253→                  <span className="text-foreground font-semibold text-sm">{orderData.estimatedTime} minutes</span>
+   254→   254→                </div>
+   255→   255→              </div>
+   256→   256→
+   257→   257→              <div className="flex items-center gap-3">
+   258→   258→                <div className="w-9 h-9 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+   259→   259→                  <ChefHat className="w-4 h-4 text-green-400" />
+   260→   260→                </div>
+   261→   261→                <div>
+   262→   262→                  <span className="text-xs text-muted-foreground block">Status</span>
+   263→   263→                  <span className="text-green-400 font-semibold text-sm">Preparing your order</span>
+   264→   264→                </div>
+   265→   265→              </div>
+   266→   266→
+   267→   267→              <div className="flex items-center gap-3">
+   268→   268→                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+   269→   269→                  <MapPin className="w-4 h-4 text-primary" />
+   270→   270→                </div>
+   271→   271→                <div className="min-w-0 overflow-hidden">
+   272→   272→                  <span className="text-xs text-muted-foreground block">Delivery To</span>
+   273→   273→                  <span className="text-foreground font-semibold text-sm truncate block">{formData.address}, {formData.city}</span>
+   274→   274→                </div>
+   275→   275→              </div>
+   276→   276→
+   277→   277→              {paymentMethod !== 'cash' && transactionId && (
+   278→   278→                <div className="flex items-center gap-3">
+   279→   279→                  <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+   280→   280→                    <FileText className="w-4 h-4 text-blue-400" />
+   281→   281→                  </div>
+   282→   282→                  <div>
+   283→   283→                    <span className="text-xs text-muted-foreground block">Transaction ID</span>
+   284→   284→                    <span className="text-foreground font-mono text-sm">{transactionId}</span>
+   285→   285→                  </div>
+   286→   286→                </div>
+   287→   287→              )}
+   288→   288→            </div>
+   289→   289→          </motion.div>
+   290→   290→
+   291→   291→          {/* Payment Summary */}
+   292→   292→          <motion.div
+   293→   293→            className="bg-card rounded-2xl border border-border p-5 mb-6"
+   294→   294→            initial={{ opacity: 0, y: 20 }}
+   295→   295→            animate={{ opacity: 1, y: 0 }}
+   296→   296→            transition={{ delay: 0.7 }}
+   297→   297→          >
+   298→   298→            <div className="flex items-center justify-between mb-2">
+   299→   299→              <span className="text-sm text-muted-foreground">Payment Method</span>
+   300→   300→              <span className="text-sm font-medium text-foreground">
+   301→   301→                {paymentMethod === 'cash' ? 'Cash on Delivery' : paymentMethod === 'card' ? 'Credit / Debit Card' : 'Online Payment'}
+   302→   302→              </span>
+   303→   303→            </div>
+   304→   304→            <div className="flex items-center justify-between">
+   305→   305→              <span className="text-sm text-muted-foreground">Total Paid</span>
+   306→   306→              <span className="text-fire-gradient font-bold text-lg">{formatPrice(total)}</span>
+   307→   307→            </div>
+   308→   308→          </motion.div>
+   309→   309→
+   310→   310→          {/* Action Buttons */}
+   311→   311→          <motion.div
+   312→   312→            className="space-y-3"
+   313→   313→            initial={{ opacity: 0, y: 20 }}
+   314→   314→            animate={{ opacity: 1, y: 0 }}
+   315→   315→            transition={{ delay: 0.8 }}
+   316→   316→          >
+   317→   317→            <Button
+   318→   318→              className="w-full bg-fire-gradient text-primary-foreground btn-fire-glow font-semibold py-5"
+   319→   319→              onClick={() => router.push('/')}
+   320→   320→            >
+   321→   321→              <Flame className="w-4 h-4 mr-2" />
+   322→   322→              Back to Home
+   323→   323→            </Button>
+   324→   324→            <Button
+   325→   325→              variant="outline"
+   326→   326→              className="w-full border-border text-foreground hover:bg-secondary"
+   327→   327→              onClick={() => router.push('/menu')}
+   328→   328→            >
+   329→   329→              Order More
+   330→   330→            </Button>
+   331→   331→          </motion.div>
+   332→   332→        </motion.div>
+   333→   333→      </div>
+   334→   334→    )
+   335→   335→  }
+   336→   336→
+   337→   337→  return (
+   338→   338→    <div className="min-h-screen bg-background">
+   339→   339→      {/* Chef Transition */}
+   340→   340→      <ChefTransition isActive={showChef} onComplete={onChefComplete} />
+   341→   341→
+   342→   342→      {/* Header */}
+   343→   343→      <div className="pt-24 pb-6">
+   344→   344→        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+   345→   345→          <motion.h1
+   346→   346→            className="text-3xl md:text-4xl font-serif font-black text-fire-gradient mb-8"
+   347→   347→            initial={{ opacity: 0, y: -10 }}
+   348→   348→            animate={{ opacity: 1, y: 0 }}
+   349→   349→          >
+   350→   350→            Checkout
+   351→   351→          </motion.h1>
+   352→   352→
+   353→   353→          {/* Enhanced Progress Steps */}
+   354→   354→          <div className="relative">
+   355→   355→            {/* Progress bar background */}
+   356→   356→            <div className="absolute top-5 left-0 right-0 h-0.5 bg-border z-0" />
+   357→   357→            {/* Progress bar filled */}
+   358→   358→            <motion.div
+   359→   359→              className="absolute top-5 left-0 h-0.5 bg-fire-gradient z-0"
+   360→   360→              initial={{ width: '0%' }}
+   361→   361→              animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+   362→   362→              transition={{ duration: 0.5, ease: 'easeInOut' }}
+   363→   363→            />
+   364→   364→
+   365→   365→            <div className="flex items-start justify-between relative z-10">
+   366→   366→              {steps.map((step, idx) => (
+   367→   367→                <div key={step.label} className="flex flex-col items-center flex-1">
+   368→   368→                  <motion.div
+   369→   369→                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all border-2 ${
+   370→   370→                      idx < currentStep
+   371→   371→                        ? 'bg-green-500 border-green-500 text-white'
+   372→   372→                        : idx === currentStep
+   373→   373→                        ? 'bg-fire-gradient border-transparent text-primary-foreground shadow-lg shadow-primary/30'
+   374→   374→                        : 'bg-card border-border text-muted-foreground'
+   375→   375→                    }`}
+   376→   376→                    animate={idx === currentStep ? { scale: [1, 1.1, 1] } : {}}
+   377→   377→                    transition={{ duration: 0.3 }}
+   378→   378→                  >
+   379→   379→                    {idx < currentStep ? (
+   380→   380→                      <Check className="w-4 h-4" />
+   381→   381→                    ) : (
+   382→   382→                      <step.icon className="w-4 h-4" />
+   383→   383→                    )}
+   384→   384→                  </motion.div>
+   385→   385→                  <span
+   386→   386→                    className={`mt-2 text-xs font-medium text-center hidden sm:block ${
+   387→   387→                      idx <= currentStep ? 'text-foreground' : 'text-muted-foreground'
+   388→   388→                    }`}
+   389→   389→                  >
+   390→   390→                    {step.label}
+   391→   391→                  </span>
+   392→   392→                </div>
+   393→   393→              ))}
+   394→   394→            </div>
+   395→   395→          </div>
+   396→   396→        </div>
+   397→   397→      </div>
+   398→   398→
+   399→   399→      {/* Main Content */}
+   400→   400→      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+   401→   401→        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+   402→   402→          {/* Left: Step Content */}
+   403→   403→          <div className="lg:col-span-2">
+   404→   404→            <AnimatePresence mode="wait">
+   405→   405→              <motion.div
+   406→   406→                key={currentStep}
+   407→   407→                initial={{ opacity: 0, x: 30 }}
+   408→   408→                animate={{ opacity: 1, x: 0 }}
+   409→   409→                exit={{ opacity: 0, x: -30 }}
+   410→   410→                transition={{ duration: 0.3 }}
+   411→   411→              >
+   412→   412→                {/* Step 0: Cart Review */}
+   413→   413→                {currentStep === 0 && (
+   414→   414→                  <div>
+   415→   415→                    <h2 className="text-xl font-serif font-bold text-foreground mb-4 flex items-center gap-2">
+   416→   416→                      <ShoppingCart className="w-5 h-5 text-primary" />
+   417→   417→                      Your Cart ({totalItems} items)
+   418→   418→                    </h2>
+   419→   419→                    <div className="space-y-3">
+   420→   420→                      {items.map((item, index) => (
+   421→   421→                        <motion.div
+   422→   422→                          key={`${item.id}-${item.size}-${item.spiceLevel}`}
+   423→   423→                          initial={{ opacity: 0, y: 10 }}
+   424→   424→                          animate={{ opacity: 1, y: 0 }}
+   425→   425→                          transition={{ delay: index * 0.05 }}
+   426→   426→                          className="flex items-center gap-4 bg-card rounded-xl border border-border p-4 group hover:border-primary/20 transition-colors"
+   427→   427→                        >
+   428→   428→                          <img
+   429→   429→                            src={item.image || '/images/product-classic-burger.png'}
+   430→   430→                            alt={item.name}
+   431→   431→                            className="w-16 h-16 rounded-lg object-cover"
+   432→   432→                          />
+   433→   433→                          <div className="flex-1 min-w-0">
+   434→   434→                            <h3 className="font-medium text-foreground text-sm truncate">
+   435→   435→                              {item.name}
+   436→   436→                            </h3>
+   437→   437→                            <div className="text-xs text-muted-foreground space-x-2">
+   438→   438→                              {item.size && <span>{item.size}</span>}
+   439→   439→                              {item.spiceLevel && <span>{item.spiceLevel}</span>}
+   440→   440→                            </div>
+   441→   441→                            {item.addons && item.addons.length > 0 && (
+   442→   442→                              <div className="text-xs text-primary/80">
+   443→   443→                                + {item.addons.join(', ')}
+   444→   444→                              </div>
+   445→   445→                            )}
+   446→   446→                            <span className="text-fire-gradient font-bold text-sm">
+   447→   447→                              {formatPrice((item.price + (item.extraCharges || 0)) * item.quantity)}
+   448→   448→                            </span>
+   449→   449→                          </div>
+   450→   450→                          <div className="flex items-center gap-2">
+   451→   451→                            <div className="flex items-center border border-border rounded-lg overflow-hidden">
+   452→   452→                              <button
+   453→   453→                                onClick={() =>
+   454→   454→                                  updateQuantity(item.id, item.size, item.spiceLevel, item.quantity - 1)
+   455→   455→                                }
+   456→   456→                                className="px-2 py-1 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+   457→   457→                              >
+   458→   458→                                <Minus className="w-3 h-3" />
+   459→   459→                              </button>
+   460→   460→                              <span className="px-2 text-foreground text-sm font-medium">
+   461→   461→                                {item.quantity}
+   462→   462→                              </span>
+   463→   463→                              <button
+   464→   464→                                onClick={() =>
+   465→   465→                                  updateQuantity(item.id, item.size, item.spiceLevel, item.quantity + 1)
+   466→   466→                                }
+   467→   467→                                className="px-2 py-1 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+   468→   468→                              >
+   469→   469→                                <Plus className="w-3 h-3" />
+   470→   470→                              </button>
+   471→   471→                            </div>
+   472→   472→                            <button
+   473→   473→                              onClick={() => removeItem(item.id, item.size, item.spiceLevel)}
+   474→   474→                              className="text-muted-foreground hover:text-destructive transition-colors p-1 opacity-0 group-hover:opacity-100"
+   475→   475→                            >
+   476→   476→                              <Trash2 className="w-4 h-4" />
+   477→   477→                            </button>
+   478→   478→                          </div>
+   479→   479→                        </motion.div>
+   480→   480→                      ))}
+   481→   481→                    </div>
+   482→   482→
+   483→   483→                    {items.length > 0 && (
+   484→   484→                      <div className="mt-4">
+   485→   485→                        <Button
+   486→   486→                          variant="outline"
+   487→   487→                          className="border-border text-muted-foreground hover:text-foreground"
+   488→   488→                          onClick={() => router.push('/menu')}
+   489→   489→                        >
+   490→   490→                          <Plus className="w-4 h-4 mr-2" />
+   491→   491→                          Add More Items
+   492→   492→                        </Button>
+   493→   493→                      </div>
+   494→   494→                    )}
+   495→   495→                  </div>
+   496→   496→                )}
+   497→   497→
+   498→   498→                {/* Step 1: Delivery Info */}
+   499→   499→                {currentStep === 1 && (
+   500→   500→                  <div>
+   501→   501→                    <h2 className="text-xl font-serif font-bold text-foreground mb-4 flex items-center gap-2">
+   502→   502→                      <Truck className="w-5 h-5 text-primary" />
+   503→   503→                      Delivery Information
+   504→   504→                    </h2>
+   505→   505→                    <div className="bg-card rounded-xl border border-border p-6 space-y-4">
+   506→   506→                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+   507→   507→                        <div>
+   508→   508→                          <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-1.5">
+   509→   509→                            <User className="w-3.5 h-3.5 text-muted-foreground" />
+   510→   510→                            Full Name *
+   511→   511→                          </label>
+   512→   512→                          <Input
+   513→   513→                            value={formData.name}
+   514→   514→                            onChange={(e) => updateField('name', e.target.value)}
+   515→   515→                            placeholder="John Doe"
+   516→   516→                            className="bg-background border-border text-foreground"
+   517→   517→                          />
+   518→   518→                        </div>
+   519→   519→                        <div>
+   520→   520→                          <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-1.5">
+   521→   521→                            <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+   522→   522→                            Phone Number *
+   523→   523→                          </label>
+   524→   524→                          <Input
+   525→   525→                            value={formData.phone}
+   526→   526→                            onChange={(e) => updateField('phone', e.target.value)}
+   527→   527→                            placeholder="+92 320 5719979"
+   528→   528→                            className="bg-background border-border text-foreground"
+   529→   529→                          />
+   530→   530→                        </div>
+   531→   531→                      </div>
+   532→   532→                      <div>
+   533→   533→                        <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-1.5">
+   534→   534→                          <Mail className="w-3.5 h-3.5 text-muted-foreground" />
+   535→   535→                          Email (optional)
+   536→   536→                        </label>
+   537→   537→                        <Input
+   538→   538→                          value={formData.email}
+   539→   539→                          onChange={(e) => updateField('email', e.target.value)}
+   540→   540→                          placeholder="john@example.com"
+   541→   541→                          type="email"
+   542→   542→                          className="bg-background border-border text-foreground"
+   543→   543→                        />
+   544→   544→                      </div>
+   545→   545→                      <div>
+   546→   546→                        <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-1.5">
+   547→   547→                          <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
+   548→   548→                          Delivery Address *
+   549→   549→                        </label>
+   550→   550→                        <Input
+   551→   551→                          value={formData.address}
+   552→   552→                          onChange={(e) => updateField('address', e.target.value)}
+   553→   553→                          placeholder="Street, Area, Landmark"
+   554→   554→                          className="bg-background border-border text-foreground"
+   555→   555→                        />
+   556→   556→                      </div>
+   557→   557→                      <div>
+   558→   558→                        <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-1.5">
+   559→   559→                          <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
+   560→   560→                          City *
+   561→   561→                        </label>
+   562→   562→                        <Input
+   563→   563→                          value={formData.city}
+   564→   564→                          onChange={(e) => updateField('city', e.target.value)}
+   565→   565→                          placeholder="Rawalpindi"
+   566→   566→                          className="bg-background border-border text-foreground"
+   567→   567→                        />
+   568→   568→                      </div>
+   569→   569→                      <div>
+   570→   570→                        <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-1.5">
+   571→   571→                          <FileText className="w-3.5 h-3.5 text-muted-foreground" />
+   572→   572→                          Delivery Notes (optional)
+   573→   573→                        </label>
+   574→   574→                        <Input
+   575→   575→                          value={formData.notes}
+   576→   576→                          onChange={(e) => updateField('notes', e.target.value)}
+   577→   577→                          placeholder="Ring doorbell, leave at door, etc."
+   578→   578→                          className="bg-background border-border text-foreground"
+   579→   579→                        />
+   580→   580→                      </div>
+   581→   581→
+   582→   582→                      {/* Delivery Info Notice */}
+   583→   583→                      <div className="bg-primary/5 border border-primary/10 rounded-lg p-3 flex items-start gap-2">
+   584→   584→                        <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+   585→   585→                        <div className="text-xs text-muted-foreground">
+   586→   586→                          <span className="text-foreground font-medium">Estimated delivery:</span>{' '}
+   587→   587→                          30-45 minutes. Free delivery on orders above Rs. 2,500.
+   588→   588→                        </div>
+   589→   589→                      </div>
+   590→   590→                    </div>
+   591→   591→                  </div>
+   592→   592→                )}
+   593→   593→
+   594→   594→                {/* Step 2: Payment */}
+   595→   595→                {currentStep === 2 && (
+   596→   596→                  <div>
+   597→   597→                    <h2 className="text-xl font-serif font-bold text-foreground mb-4 flex items-center gap-2">
+   598→   598→                      <CreditCard className="w-5 h-5 text-primary" />
+   599→   599→                      Payment Method
+   600→   600→                    </h2>
+   601→   601→
+   602→   602→                    <div className="space-y-3 mb-6">
+   603→   603→                      {[
+   604→   604→                        { id: 'cash', label: 'Cash on Delivery', icon: Banknote, desc: 'Pay when your order arrives at your door' },
+   605→   605→                        { id: 'card', label: 'Credit / Debit Card', icon: CreditCard, desc: 'Visa, MasterCard, Amex — pay online now' },
+   606→   606→                        { id: 'online', label: 'Online Transfer', icon: Wifi, desc: 'Apple Pay, Google Pay, EasyPaisa, JazzCash' },
+   607→   607→                      ].map((method) => (
+   608→   608→                        <motion.button
+   609→   609→                          key={method.id}
+   610→   610→                          onClick={() => setPaymentMethod(method.id)}
+   611→   611→                          className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left ${
+   612→   612→                            paymentMethod === method.id
+   613→   613→                              ? 'bg-primary/10 border-primary/50 text-foreground shadow-lg shadow-primary/10'
+   614→   614→                              : 'bg-card border-border text-muted-foreground hover:border-primary/20'
+   615→   615→                          }`}
+   616→   616→                          whileHover={{ scale: 1.01 }}
+   617→   617→                          whileTap={{ scale: 0.99 }}
+   618→   618→                        >
+   619→   619→                          <div
+   620→   620→                            className={`w-11 h-11 rounded-xl flex items-center justify-center transition-colors ${
+   621→   621→                              paymentMethod === method.id
+   622→   622→                                ? 'bg-fire-gradient'
+   623→   623→                                : 'bg-secondary'
+   624→   624→                            }`}
+   625→   625→                          >
+   626→   626→                            <method.icon
+   627→   627→                              className={`w-5 h-5 ${
+   628→   628→                                paymentMethod === method.id
+   629→   629→                                  ? 'text-primary-foreground'
+   630→   630→                                  : 'text-muted-foreground'
+   631→   631→                              }`}
+   632→   632→                            />
+   633→   633→                          </div>
+   634→   634→                          <div className="flex-1">
+   635→   635→                            <span className="font-medium text-foreground text-sm block">
+   636→   636→                              {method.label}
+   637→   637→                            </span>
+   638→   638→                            <p className="text-xs text-muted-foreground mt-0.5">
+   639→   639→                              {method.desc}
+   640→   640→                            </p>
+   641→   641→                          </div>
+   642→   642→                          {paymentMethod === method.id && (
+   643→   643→                            <motion.div
+   644→   644→                              initial={{ scale: 0 }}
+   645→   645→                              animate={{ scale: 1 }}
+   646→   646→                              className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
+   647→   647→                            >
+   648→   648→                              <Check className="w-3.5 h-3.5 text-white" />
+   649→   649→                            </motion.div>
+   650→   650→                          )}
+   651→   651→                        </motion.button>
+   652→   652→                      ))}
+   653→   653→                    </div>
+   654→   654→
+   655→   655→                    {/* Transaction ID input for non-cash payments */}
+   656→   656→                    {paymentMethod !== 'cash' && (
+   657→   657→                      <motion.div
+   658→   658→                        initial={{ opacity: 0, height: 0 }}
+   659→   659→                        animate={{ opacity: 1, height: 'auto' }}
+   660→   660→                        exit={{ opacity: 0, height: 0 }}
+   661→   661→                        className="bg-card rounded-xl border-2 border-dashed border-primary/30 p-5"
+   662→   662→                      >
+   663→   663→                        <div className="flex items-center gap-2 mb-3">
+   664→   664→                          <ShieldCheck className="w-4 h-4 text-primary" />
+   665→   665→                          <h3 className="font-semibold text-foreground text-sm">
+   666→   666→                            Payment Verification
+   667→   667→                          </h3>
+   668→   668→                        </div>
+   669→   669→                        <p className="text-xs text-muted-foreground mb-4">
+   670→   670→                          {paymentMethod === 'card'
+   671→   671→                            ? 'After completing your card payment, enter the transaction ID from your bank confirmation.'
+   672→   672→                            : 'Send payment to our account and enter the transaction ID below for verification.'}
+   673→   673→                        </p>
+   674→   674→
+   675→   675→                        {/* Account details for online transfer */}
+   676→   676→                        {paymentMethod === 'online' && (
+   677→   677→                          <div className="bg-secondary/50 rounded-lg p-3 mb-4 text-xs space-y-1">
+   678→   678→                            <p className="text-muted-foreground">
+   679→   679→                              <span className="text-foreground font-medium">Bank:</span> HBL (Habib Bank Limited)
+   680→   680→                            </p>
+   681→   681→                            <p className="text-muted-foreground">
+   682→   682→                              <span className="text-foreground font-medium">Account:</span> Food Express Pvt Ltd
+   683→   683→                            </p>
+   684→   684→                            <p className="text-muted-foreground">
+   685→   685→                              <span className="text-foreground font-medium">IBAN:</span> PK36HABB0012345678901234
+   686→   686→                            </p>
+   687→   687→                            <p className="text-muted-foreground">
+   688→   688→                              <span className="text-foreground font-medium">EasyPaisa:</span> 0320-5719979
+   689→   689→                            </p>
+   690→   690→                            <p className="text-muted-foreground">
+   691→   691→                              <span className="text-foreground font-medium">JazzCash:</span> 0320-5719979
+   692→   692→                            </p>
+   693→   693→                          </div>
+   694→   694→                        )}
+   695→   695→
+   696→   696→                        <label className="block text-sm font-medium text-foreground mb-1.5">
+   697→   697→                          Transaction ID *
+   698→   698→                        </label>
+   699→   699→                        <Input
+   700→   700→                          value={transactionId}
+   701→   701→                          onChange={(e) => setTransactionId(e.target.value)}
+   702→   702→                          placeholder={paymentMethod === 'card' ? 'e.g., TXN-2024-XXXXXX' : 'e.g., EP-XXXXXX or JC-XXXXXX'}
+   703→   703→                          className="bg-background border-border text-foreground font-mono"
+   704→   704→                        />
+   705→   705→                        <p className="text-[10px] text-muted-foreground mt-2">
+   706→   706→                          Your transaction ID helps us verify and process your order faster.
+   707→   707→                        </p>
+   708→   708→                      </motion.div>
+   709→   709→                    )}
+   710→   710→
+   711→   711→                    {/* Cash payment notice */}
+   712→   712→                    {paymentMethod === 'cash' && (
+   713→   713→                      <motion.div
+   714→   714→                        initial={{ opacity: 0, height: 0 }}
+   715→   715→                        animate={{ opacity: 1, height: 'auto' }}
+   716→   716→                        className="bg-green-500/5 border border-green-500/10 rounded-lg p-4 flex items-start gap-2"
+   717→   717→                      >
+   718→   718→                        <Banknote className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+   719→   719→                        <div className="text-xs text-muted-foreground">
+   720→   720→                          <span className="text-green-400 font-medium">Cash on Delivery:</span> Have the exact amount ready
+   721→   721→                          ({formatPrice(total)}) when your order arrives. Our rider will provide a receipt.
+   722→   722→                        </div>
+   723→   723→                      </motion.div>
+   724→   724→                    )}
+   725→   725→                  </div>
+   726→   726→                )}
+   727→   727→
+   728→   728→                {/* Step 3: Review */}
+   729→   729→                {currentStep === 3 && (
+   730→   730→                  <div>
+   731→   731→                    <h2 className="text-xl font-serif font-bold text-foreground mb-4 flex items-center gap-2">
+   732→   732→                      <ClipboardCheck className="w-5 h-5 text-primary" />
+   733→   733→                      Review Your Order
+   734→   734→                    </h2>
+   735→   735→                    <div className="space-y-4">
+   736→   736→                      {/* Delivery Info */}
+   737→   737→                      <div className="bg-card rounded-xl border border-border p-5">
+   738→   738→                        <div className="flex items-center justify-between mb-3">
+   739→   739→                          <h3 className="font-semibold text-foreground text-sm flex items-center gap-2">
+   740→   740→                            <Truck className="w-4 h-4 text-primary" />
+   741→   741→                            Delivery Details
+   742→   742→                          </h3>
+   743→   743→                          <button
+   744→   744→                            onClick={() => setCurrentStep(1)}
+   745→   745→                            className="text-xs text-primary hover:text-primary/80 transition-colors"
+   746→   746→                          >
+   747→   747→                            Edit
+   748→   748→                          </button>
+   749→   749→                        </div>
+   750→   750→                        <div className="text-sm text-muted-foreground space-y-1.5">
+   751→   751→                          <p className="flex items-center gap-2"><User className="w-3.5 h-3.5" /> {formData.name}</p>
+   752→   752→                          <p className="flex items-center gap-2"><Phone className="w-3.5 h-3.5" /> {formData.phone}</p>
+   753→   753→                          {formData.email && <p className="flex items-center gap-2"><Mail className="w-3.5 h-3.5" /> {formData.email}</p>}
+   754→   754→                          <p className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5" /> {formData.address}, {formData.city}</p>
+   755→   755→                          {formData.notes && <p className="flex items-center gap-2"><FileText className="w-3.5 h-3.5" /> {formData.notes}</p>}
+   756→   756→                        </div>
+   757→   757→                      </div>
+   758→   758→
+   759→   759→                      {/* Payment */}
+   760→   760→                      <div className="bg-card rounded-xl border border-border p-5">
+   761→   761→                        <div className="flex items-center justify-between mb-3">
+   762→   762→                          <h3 className="font-semibold text-foreground text-sm flex items-center gap-2">
+   763→   763→                            <CreditCard className="w-4 h-4 text-primary" />
+   764→   764→                            Payment
+   765→   765→                          </h3>
+   766→   766→                          <button
+   767→   767→                            onClick={() => setCurrentStep(2)}
+   768→   768→                            className="text-xs text-primary hover:text-primary/80 transition-colors"
+   769→   769→                          >
+   770→   770→                            Edit
+   771→   771→                          </button>
+   772→   772→                        </div>
+   773→   773→                        <div className="text-sm text-muted-foreground">
+   774→   774→                          <p className="flex items-center gap-2">
+   775→   775→                            {paymentMethod === 'cash' ? <Banknote className="w-3.5 h-3.5" /> : paymentMethod === 'card' ? <CreditCard className="w-3.5 h-3.5" /> : <Wifi className="w-3.5 h-3.5" />}
+   776→   776→                            {paymentMethod === 'cash'
+   777→   777→                              ? 'Cash on Delivery'
+   778→   778→                              : paymentMethod === 'card'
+   779→   779→                              ? 'Credit / Debit Card'
+   780→   780→                              : 'Online Transfer'}
+   781→   781→                          </p>
+   782→   782→                          {transactionId && (
+   783→   783→                            <p className="mt-1 text-xs font-mono">
+   784→   784→                              Transaction ID: {transactionId}
+   785→   785→                            </p>
+   786→   786→                          )}
+   787→   787→                        </div>
+   788→   788→                      </div>
+   789→   789→
+   790→   790→                      {/* Items */}
+   791→   791→                      <div className="bg-card rounded-xl border border-border p-5">
+   792→   792→                        <h3 className="font-semibold text-foreground text-sm mb-3 flex items-center gap-2">
+   793→   793→                          <ShoppingCart className="w-4 h-4 text-primary" />
+   794→   794→                          Items ({totalItems})
+   795→   795→                        </h3>
+   796→   796→                        <div className="space-y-3">
+   797→   797→                          {items.map((item) => (
+   798→   798→                            <div
+   799→   799→                              key={`${item.id}-${item.size}-${item.spiceLevel}`}
+   800→   800→                              className="flex items-center gap-3"
+   801→   801→                            >
+   802→   802→                              <img
+   803→   803→                                src={item.image || '/images/product-classic-burger.png'}
+   804→   804→                                alt={item.name}
+   805→   805→                                className="w-10 h-10 rounded-lg object-cover"
+   806→   806→                              />
+   807→   807→                              <div className="flex-1 min-w-0">
+   808→   808→                                <span className="text-foreground text-sm font-medium truncate block">
+   809→   809→                                  {item.quantity}x {item.name}
+   810→   810→                                </span>
+   811→   811→                                {item.addons && item.addons.length > 0 && (
+   812→   812→                                  <span className="text-xs text-muted-foreground">+ {item.addons.join(', ')}</span>
+   813→   813→                                )}
+   814→   814→                              </div>
+   815→   815→                              <span className="text-foreground font-medium text-sm">
+   816→   816→                                {formatPrice((item.price + (item.extraCharges || 0)) * item.quantity)}
+   817→   817→                              </span>
+   818→   818→                            </div>
+   819→   819→                          ))}
+   820→   820→                        </div>
+   821→   821→                      </div>
+   822→   822→                    </div>
+   823→   823→                  </div>
+   824→   824→                )}
+   825→   825→              </motion.div>
+   826→   826→            </AnimatePresence>
+   827→   827→
+   828→   828→            {/* Navigation Buttons */}
+   829→   829→            <div className="flex items-center justify-between mt-8">
+   830→   830→              {currentStep > 0 ? (
+   831→   831→                <Button
+   832→   832→                  variant="outline"
+   833→   833→                  onClick={handleBack}
+   834→   834→                  className="border-border text-foreground hover:bg-secondary"
+   835→   835→                >
+   836→   836→                  <ArrowLeft className="w-4 h-4 mr-2" />
+   837→   837→                  Back
+   838→   838→                </Button>
+   839→   839→              ) : (
+   840→   840→                <div />
+   841→   841→              )}
+   842→   842→
+   843→   843→              {currentStep < 3 ? (
+   844→   844→                <Button
+   845→   845→                  className="bg-fire-gradient text-primary-foreground btn-fire-glow font-semibold"
+   846→   846→                  onClick={handleNext}
+   847→   847→                  disabled={!canProceed()}
+   848→   848→                >
+   849→   849→                  Continue
+   850→   850→                  <ArrowRight className="w-4 h-4 ml-2" />
+   851→   851→                </Button>
+   852→   852→              ) : (
+   853→   853→                <Button
+   854→   854→                  className="bg-fire-gradient text-primary-foreground btn-fire-glow font-semibold text-sm sm:text-base py-5 sm:py-6 px-6 sm:px-8"
+   855→   855→                  onClick={handlePlaceOrder}
+   856→   856→                  disabled={isPlacing}
+   857→   857→                >
+   858→   858→                  {isPlacing ? (
+   859→   859→                    <span className="flex items-center gap-2">
+   860→   860→                      <Flame className="w-5 h-5 animate-pulse" />
+   861→   861→                      Placing Order...
+   862→   862→                    </span>
+   863→   863→                  ) : (
+   864→   864→                    <>
+   865→   865→                      <span>Place Order</span>
+   866→   866→                      <span className="ml-2 opacity-80">· {formatPrice(total)}</span>
+   867→   867→                    </>
+   868→   868→                  )}
+   869→   869→                </Button>
+   870→   870→              )}
+   871→   871→            </div>
+   872→   872→          </div>
+   873→   873→
+   874→   874→          {/* Right: Order Summary */}
+   875→   875→          <div className="lg:col-span-1">
+   876→   876→            <div className="bg-card rounded-xl border border-border p-5 sticky top-24">
+   877→   877→              <h3 className="font-serif font-bold text-foreground mb-4 flex items-center gap-2">
+   878→   878→                <ShoppingCart className="w-4 h-4 text-primary" />
+   879→   879→                Order Summary
+   880→   880→              </h3>
+   881→   881→
+   882→   882→              <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
+   883→   883→                {items.map((item) => (
+   884→   884→                  <div
+   885→   885→                    key={`summary-${item.id}-${item.size}-${item.spiceLevel}`}
+   886→   886→                    className="flex items-center gap-3"
+   887→   887→                  >
+   888→   888→                    <img
+   889→   889→                      src={item.image || '/images/product-classic-burger.png'}
+   890→   890→                      alt={item.name}
+   891→   891→                      className="w-10 h-10 rounded-lg object-cover"
+   892→   892→                    />
+   893→   893→                    <div className="flex-1 min-w-0">
+   894→   894→                      <p className="text-foreground text-xs font-medium truncate">
+   895→   895→                        {item.quantity}x {item.name}
+   896→   896→                      </p>
+   897→   897→                      {item.addons && item.addons.length > 0 && (
+   898→   898→                        <p className="text-[10px] text-muted-foreground truncate">
+   899→   899→                          + {item.addons.join(', ')}
+   900→   900→                        </p>
+   901→   901→                      )}
+   902→   902→                    </div>
+   903→   903→                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+   904→   904→                      {formatPrice((item.price + (item.extraCharges || 0)) * item.quantity)}
+   905→   905→                    </span>
+   906→   906→                  </div>
+   907→   907→                ))}
+   908→   908→              </div>
+   909→   909→
+   910→   910→              <div className="border-t border-border pt-4 space-y-2">
+   911→   911→                <div className="flex items-center justify-between text-sm">
+   912→   912→                  <span className="text-muted-foreground">Subtotal</span>
+   913→   913→                  <span className="text-foreground">{formatPrice(subtotal)}</span>
+   914→   914→                </div>
+   915→   915→                <div className="flex items-center justify-between text-sm">
+   916→   916→                  <span className="text-muted-foreground">Delivery Fee</span>
+   917→   917→                  <span className={deliveryFee === 0 ? 'text-green-400' : 'text-foreground'}>
+   918→   918→                    {deliveryFee === 0 ? 'Free' : formatPrice(deliveryFee)}
+   919→   919→                  </span>
+   920→   920→                </div>
+   921→   921→                <div className="border-t border-border pt-2 flex items-center justify-between">
+   922→   922→                  <span className="font-semibold text-foreground">Total</span>
+   923→   923→                  <span className="text-fire-gradient font-bold text-lg">
+   924→   924→                    {formatPrice(total)}
+   925→   925→                  </span>
+   926→   926→                </div>
+   927→   927→              </div>
+   928→   928→
+   929→   929→              {subtotal < 2500 && (
+   930→   930→                <p className="text-xs text-muted-foreground mt-3 text-center">
+   931→   931→                  Add {formatPrice(2500 - subtotal)} more for free delivery 🔥
+   932→   932→                </p>
+   933→   933→              )}
+   934→   934→
+   935→   935→              {/* Security badge */}
+   936→   936→              <div className="mt-4 pt-4 border-t border-border flex items-center gap-2 justify-center">
+   937→   937→                <ShieldCheck className="w-3.5 h-3.5 text-green-400" />
+   938→   938→                <span className="text-xs text-muted-foreground">Secure & Encrypted Payment</span>
+   939→   939→              </div>
+   940→   940→            </div>
+   941→   941→          </div>
+   942→   942→        </div>
+   943→   943→      </div>
+   944→   944→    </div>
+   945→   945→  )
+   946→   946→}
+   947→   947→
