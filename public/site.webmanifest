@@ -1,25 +1,26 @@
 {
-  "name": "Food Express - Where Flavor Meets Fire",
-  "short_name": "Food Express",
-  "description": "Experience the boldest flavors in town. From sizzling burgers to wood-fired pizzas — every bite is a masterpiece.",
+  "name": "Ice Cream Shop - Where Every Scoop Tells a Story",
+  "short_name": "Ice Cream Shop",
+  "description": "Experience the creamiest, dreamiest ice cream in town. From classic scoops to indulgent sundaes — every bite is pure bliss.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0A0A0A",
-  "theme_color": "#FF6B00",
+  "background_color": "#1A0F1F",
+  "theme_color": "#EC4899",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/favicon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
+      "src": "/og-image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "categories": ["food", "restaurant"],
+  "categories": ["food", "ice cream", "dessert"],
   "lang": "en-US"
 }

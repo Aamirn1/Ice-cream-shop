@@ -45,9 +45,10 @@ export default function Footer() {
             transition={{ duration: 0.5 }}
           >
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <IceCreamCone className="w-6 h-6 text-primary" />
-              <span className="text-fire-gradient font-serif font-black text-xl">
-                ICE CREAM SHOP
+              <IceCreamCone className="w-6 h-6 neon-icon-pink" />
+              <span className="neon-logo-sm text-xl">
+                <span className="neon-script">Ice cream</span>{' '}
+                <span className="neon-bold">Shop</span>
               </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">

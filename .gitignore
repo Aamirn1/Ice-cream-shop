@@ -52,3 +52,13 @@ prompt
 server.log
 # Skills directory
 /skills/
+# Internal/sandbox files (not part of the project)
+/upload/
+/worklog.md
+/tool-results/
+/examples/
+/mini-services/
+/download/
+/skills/
+*.db
+db/*.db

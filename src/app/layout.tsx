@@ -13,7 +13,9 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
 });
 
-const siteUrl = "https://icecreamshop.example.com";
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://icecreamshop.example.com");
 
 export const metadata: Metadata = {
   title: {
@@ -58,6 +60,9 @@ export const metadata: Metadata = {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
+    apple: [
+      { url: "/og-image.png", sizes: "180x180", type: "image/png" },
+    ],
   },
   manifest: "/site.webmanifest",
   openGraph: {
@@ -68,12 +73,29 @@ export const metadata: Metadata = {
     siteName: "Ice Cream Shop",
     type: "website",
     locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1536,
+        height: 1024,
+        alt: "Ice Cream Shop - Neon-lit premium ice cream parlor. Where every scoop tells a story. Artisan scoops, sundaes, cones and shakes.",
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Ice Cream Shop | Where Every Scoop Tells a Story 🍦",
     description:
       "Experience the creamiest, dreamiest ice cream in town. Classic scoops, indulgent sundaes — every bite is pure bliss.",
+    images: [
+      {
+        url: "/og-image.png",
+        alt: "Ice Cream Shop - Premium Ice Cream Parlor",
+      },
+    ],
+    creator: "@icecreamshop",
+    site: "@icecreamshop",
   },
 };
 

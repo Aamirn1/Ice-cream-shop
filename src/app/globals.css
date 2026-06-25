@@ -248,3 +248,167 @@ html {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ============================================ */
+/* NEON LOGO STYLES (ice cream shop branding)   */
+/* ============================================ */
+
+/* Neon logo text - "Ice cream" in cursive neon pink + "Shop" in bold neon blue */
+.neon-logo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25em;
+  font-family: var(--font-playfair), serif;
+  line-height: 1;
+}
+
+.neon-logo .neon-script {
+  font-style: italic;
+  font-weight: 700;
+  color: #FF6EC7;
+  text-shadow:
+    0 0 4px #FF6EC7,
+    0 0 8px #FF6EC7,
+    0 0 16px rgba(255, 110, 199, 0.8),
+    0 0 24px rgba(255, 110, 199, 0.5),
+    0 0 36px rgba(192, 38, 211, 0.4);
+  animation: neon-flicker-pink 4s ease-in-out infinite;
+}
+
+.neon-logo .neon-bold {
+  font-weight: 900;
+  color: #22D3EE;
+  text-shadow:
+    0 0 4px #22D3EE,
+    0 0 8px #22D3EE,
+    0 0 16px rgba(34, 211, 238, 0.8),
+    0 0 24px rgba(59, 130, 246, 0.5),
+    0 0 36px rgba(59, 130, 246, 0.4);
+  animation: neon-flicker-blue 4s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+/* Smaller neon logo for mobile drawer / footer */
+.neon-logo-sm {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2em;
+  font-family: var(--font-playfair), serif;
+  line-height: 1;
+}
+
+.neon-logo-sm .neon-script {
+  font-style: italic;
+  font-weight: 700;
+  color: #FF6EC7;
+  text-shadow:
+    0 0 3px #FF6EC7,
+    0 0 6px #FF6EC7,
+    0 0 12px rgba(255, 110, 199, 0.7),
+    0 0 20px rgba(192, 38, 211, 0.4);
+}
+
+.neon-logo-sm .neon-bold {
+  font-weight: 900;
+  color: #22D3EE;
+  text-shadow:
+    0 0 3px #22D3EE,
+    0 0 6px #22D3EE,
+    0 0 12px rgba(34, 211, 238, 0.7),
+    0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Neon flicker animations */
+@keyframes neon-flicker-pink {
+  0%, 100% {
+    text-shadow:
+      0 0 4px #FF6EC7,
+      0 0 8px #FF6EC7,
+      0 0 16px rgba(255, 110, 199, 0.8),
+      0 0 24px rgba(255, 110, 199, 0.5),
+      0 0 36px rgba(192, 38, 211, 0.4);
+  }
+  92% {
+    text-shadow:
+      0 0 4px #FF6EC7,
+      0 0 8px #FF6EC7,
+      0 0 16px rgba(255, 110, 199, 0.8),
+      0 0 24px rgba(255, 110, 199, 0.5),
+      0 0 36px rgba(192, 38, 211, 0.4);
+  }
+  93% {
+    text-shadow: 0 0 2px #FF6EC7, 0 0 4px rgba(255, 110, 199, 0.5);
+  }
+  94% {
+    text-shadow:
+      0 0 4px #FF6EC7,
+      0 0 8px #FF6EC7,
+      0 0 16px rgba(255, 110, 199, 0.8),
+      0 0 24px rgba(255, 110, 199, 0.5),
+      0 0 36px rgba(192, 38, 211, 0.4);
+  }
+  96% {
+    text-shadow: 0 0 2px #FF6EC7;
+  }
+  97% {
+    text-shadow:
+      0 0 4px #FF6EC7,
+      0 0 8px #FF6EC7,
+      0 0 16px rgba(255, 110, 199, 0.8),
+      0 0 24px rgba(255, 110, 199, 0.5),
+      0 0 36px rgba(192, 38, 211, 0.4);
+  }
+}
+
+@keyframes neon-flicker-blue {
+  0%, 100% {
+    text-shadow:
+      0 0 4px #22D3EE,
+      0 0 8px #22D3EE,
+      0 0 16px rgba(34, 211, 238, 0.8),
+      0 0 24px rgba(59, 130, 246, 0.5),
+      0 0 36px rgba(59, 130, 246, 0.4);
+  }
+  90% {
+    text-shadow:
+      0 0 4px #22D3EE,
+      0 0 8px #22D3EE,
+      0 0 16px rgba(34, 211, 238, 0.8),
+      0 0 24px rgba(59, 130, 246, 0.5),
+      0 0 36px rgba(59, 130, 246, 0.4);
+  }
+  91% {
+    text-shadow: 0 0 2px #22D3EE, 0 0 4px rgba(34, 211, 238, 0.5);
+  }
+  92% {
+    text-shadow:
+      0 0 4px #22D3EE,
+      0 0 8px #22D3EE,
+      0 0 16px rgba(34, 211, 238, 0.8),
+      0 0 24px rgba(59, 130, 246, 0.5),
+      0 0 36px rgba(59, 130, 246, 0.4);
+  }
+  94% {
+    text-shadow: 0 0 2px #22D3EE;
+  }
+  95% {
+    text-shadow:
+      0 0 4px #22D3EE,
+      0 0 8px #22D3EE,
+      0 0 16px rgba(34, 211, 238, 0.8),
+      0 0 24px rgba(59, 130, 246, 0.5),
+      0 0 36px rgba(59, 130, 246, 0.4);
+  }
+}
+
+/* Neon icon glow for the ice cream cone icon next to logo */
+.neon-icon-pink {
+  color: #FF6EC7;
+  filter: drop-shadow(0 0 4px #FF6EC7) drop-shadow(0 0 8px rgba(255, 110, 199, 0.6));
+}
+
+.neon-icon-blue {
+  color: #22D3EE;
+  filter: drop-shadow(0 0 4px #22D3EE) drop-shadow(0 0 8px rgba(34, 211, 238, 0.6));
+}
+

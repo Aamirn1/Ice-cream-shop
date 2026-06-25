@@ -99,9 +99,10 @@ export default function Navbar({ onSearchOpen, onCartOpen, totalItems = 0 }: Nav
               <div className="absolute inset-x-0 top-0 h-1 bg-fire-gradient" />
               <div className="flex items-center justify-between p-5 border-b border-border">
                 <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-                  <IceCreamCone className="w-6 h-6 text-primary" />
-                  <span className="text-fire-gradient font-serif font-black text-lg">
-                    ICE CREAM SHOP
+                  <IceCreamCone className="w-6 h-6 neon-icon-pink" />
+                  <span className="neon-logo-sm text-lg">
+                    <span className="neon-script">Ice cream</span>{' '}
+                    <span className="neon-bold">Shop</span>
                   </span>
                 </Link>
                 <button
@@ -175,9 +176,10 @@ export default function Navbar({ onSearchOpen, onCartOpen, totalItems = 0 }: Nav
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <IceCreamCone className="w-7 h-7 text-primary group-hover:scale-110 transition-transform" />
-              <span className="text-fire-gradient font-serif font-black text-xl md:text-2xl tracking-tight">
-                ICE CREAM SHOP
+              <IceCreamCone className="w-7 h-7 neon-icon-pink group-hover:scale-110 transition-transform" />
+              <span className="neon-logo text-xl md:text-2xl tracking-tight">
+                <span className="neon-script">Ice cream</span>{' '}
+                <span className="neon-bold">Shop</span>
               </span>
             </Link>
 
